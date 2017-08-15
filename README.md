@@ -6,3 +6,8 @@ Web app using MLB API to display Texas Rangers game day scores and live updates.
 ### Planned Features
 - Ability to search specific team
 - Display of top team and player stats
+
+### Technologies
+- React
+- superagent
+- moment
