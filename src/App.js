@@ -16,6 +16,7 @@ class App extends Component {
       teamId: 140,
       awayTeam: '',
       homeTeam: '',
+      venue: '',
       error: ''
     }
     this.getTeamInfo = this.getTeamInfo.bind(this);
@@ -42,7 +43,8 @@ class App extends Component {
           this.setState({
             game: resp.body.dates[0].games[0].gameDate,
             homeTeam: resp.body.dates[0].games[0].teams.home.team.name,
-            awayTeam:resp.body.dates[0].games[0].teams.away.team.name
+            awayTeam: resp.body.dates[0].games[0].teams.away.team.name,
+            venue: resp.body.dates[0].games[0].venue.name,
           })
           console.log('SUCCESS:', resp.body.dates[0].games);
         }
@@ -60,6 +62,9 @@ class App extends Component {
       <div className="app">
         <div className="app-header">
           {this.state.homeTeam} vs {this.state.awayTeam}
+        </div>
+        <div className="app-header">
+          @ {this.state.venue}
         </div>
       </div>
     );
