@@ -2,29 +2,65 @@ import React, { Component } from 'react';
 import request from 'superagent';
 import moment from 'moment';
 import logo from './logo.svg';
+import GameDay from './components/GameDay.js';
 import './App.css';
 
+var date = "";
+
 class App extends Component {
-  getTeamInfo(timestamp, teamId) {
+  constructor() {
+    super();
+
+    this.state = {
+      game: [],
+      teamId: 140,
+      awayTeam: '',
+      homeTeam: '',
+      error: ''
+    }
+    this.getTeamInfo = this.getTeamInfo.bind(this);
+  }
+
+  componentDidMount() {
+    this.getTeamInfo(this.state.teamId);
+    console.log(this.state.game);
+  }
+
+  getTeamInfo(teamId) {
+    var timestamp = moment().utc().format("YYYY-MM-DD");
+
     request
     .get("https://statsapi.mlb.com/api/v1/schedule?sportId=1&date="+timestamp+"&teamId="+teamId+"&language=en")
     .end((err,resp) => {
-      console.log("err:", err, "resp:", resp);
+      if(err) {
+        this.setState({
+          error: err
+        })
+      }
+      else{
+        if(resp.body.dates[0].games.length > 0) {
+          this.setState({
+            game: resp.body.dates[0].games[0].gameDate,
+            homeTeam: resp.body.dates[0].games[0].teams.home.team.name,
+            awayTeam:resp.body.dates[0].games[0].teams.away.team.name
+          })
+          console.log('SUCCESS:', resp.body.dates[0].games);
+        }
+        else {
+          this.setState({
+            error: 'No games today!'
+          })
+        }
+      }
     });  
   }
+
   render() {
-    var timestamp = moment().utc().format("YYYY-MM-DD");
-    var teamId = 140;
-    this.getTeamInfo(timestamp, teamId);
     return (
-      <div className="App">
-        <div className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h2>Welcome to React</h2>
+      <div className="app">
+        <div className="app-header">
+          {this.state.homeTeam} vs {this.state.awayTeam}
         </div>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
       </div>
     );
   }
